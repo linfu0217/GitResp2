@@ -1,0 +1,20 @@
+import win32con
+import win32clipboard as cp
+
+cp.OpenClipboard()  # 打开剪切板
+"""
+SetClipboardData方法向剪贴板写入数据，后面两个参数，第一个表示数据类型，
+建议使用win32con.CF_UNICODETEXT，这样基本可以原样输出我们传入的数据
+如果使用win32con.CF_TEXT:输出的是字节码~很别扭
+注意！！！如果需要同时写入再获取内容，数据类型这个参数一定是使用一样的
+"""
+cp.SetClipboardData(win32con.CF_UNICODETEXT, "132465")  # 向剪贴板中写入数据
+cp.GetClipboardData()
+result = cp.GetClipboardData(win32con.CF_UNICODETEXT)  # 输出：132465
+result1 = cp.GetClipboardData(win32con.CF_TEXT)  # 输出：b'`O}Y\x00'
+print(result, result1)
+
+cp.CloseClipboard()  # 关闭剪贴板
+————————————————
+版权声明：本文为CSDN博主「py小白hyg」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/qq_28197005/article/details/102955194

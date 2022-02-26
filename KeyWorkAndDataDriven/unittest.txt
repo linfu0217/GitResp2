@@ -1,0 +1,77 @@
+1test fixture( 测试固件)
+一个test fixture代表一个 或多个测试执行前的准备工作和测试结束后的清理工作，如创建数据库、启动服务器、测试环境清理等
+2test case(测试用例)
+一个test case就是一个最小测试单元，亦是一个完整的测试流程。针对一组特殊的输入进行验证与响应，通过继承unittest提供的
+测试基类（TestCase）,可以创建新的测试用例
+3test suite(测试套件)
+一个test suite就是一组测试用例，一组测试套件或两者共同组成的集合，它作用是将测试用例集合到一起，然后一次性执行集合
+中所有的测试用例
+4test runner(测试运行器)
+一个test runner由执行设定的测试用例和将测试结果提供给用户两部分功能组成
+单元加载方法
+1直接通过unittest.main()加载单元测试的测试模块，所有测试方法执行顺序按照方法名的字符串ASCII码升序排序
+2将单元测试用例（testcase）添加到测试套件（test suite）集合中，然后一次性加载所有测试对象
+测试用例
+unittest框架通过TestCase类来构建测试用例，并要求所有自定义的测试类都必须继承TestCase，它是所有测试用例的基类，传入
+一个测试方法名，将返回一个测试用例实例。TestCase子类中实现的测试用例可以单独运行，也可以和其它测试方法构成测试
+用例集，批量执行。
+TestCase类定义的几个特殊方法：
+1setUp（）:每个测试方法运行前运行，测试前的初始化工作
+2tearDown():每个测试方法运行后运行，测试后的清理工作
+3@classmethod
+ setUpClass(cls):所有的测试方法运行前运行，单元测试前准备，setUp（）之前执行，整个测试过程只执行一次
+4@classmethod
+ tearDownClass(cls):所有的测试方法运行后运行，单元测试后期清理，tearDown()之后执行，整个测试过程只执行一次
+#使用测试套件执行同一模块中的多个测试类
+class Test_add(unittest.TestCase):
+    def setUp(self):
+        print("Test is start")
+
+    def test_add(self):
+        j=Math(5,5)
+        self.assertEqual(j.add(),10)
+
+    def test_add1(self):
+        j=Math(10,20)
+        self.assertEqual(j.add(),30)
+
+    def tearDown(self):
+        print("test is end!")
+
+class Test_sub(unittest.TestCase):
+    def setUp(self):
+        print("Test is start")
+
+    def test_sub(self):
+        i=Math(8,8)
+        self.assertEqual(i.sub(),0)
+
+    def test_sub1(self):
+        i=Math(5,3)
+        self.assertEqual(i.sub(),2)
+
+    def tearDown(self):
+        print("test is end!")
+
+if __name__ == '__main__':
+    #根据给定的测试类，获取其中所有以"test"开头的方法，并返回一个测试套件
+    testCase1=unittest.TestLoader().loadTestFromTestCase(Test_add)
+    testCase2=unittest.TestLoader().loadTestFromTestCase(Test_sub)
+    #将多个测试类加载到测试套中
+    suite=unittest.TestSuite([testCase1,testCase2])
+    #设置verbosity=2，可以 打印更详细的执行信息
+    unittest.TextTestRunner(verbosity=2).run(suite)
+    #TestSuite类可以改变测试用例执行顺序
+    suite=unittest.TestSuite()
+    suite.addTest(Test_add("test_add"))
+    suite.addTest(Test_add("test_add1"))
+    suite.addTest(Test_sub("test_sub"))
+    suite.addTest(Test_sub("test_sub1"))
+    runner=unittest.TextTestRunner()
+    runner.run(suite)
+批量执行测试模块
+所有需要被执行的测试脚本模块必须以"test"开头
+if __name__ == '__main__':
+    #加载当前目录下所有有效的测试模块
+    testSuite=unittest.TestLoader().discover(".")
+    unittest.TextTestRunner(verbosity=2).run(testSuite)
